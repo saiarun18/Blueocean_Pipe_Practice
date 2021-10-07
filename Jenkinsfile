@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    node {
+      label '\'\''
+    }
+
+  }
   stages {
     stage('Dev Code Pull') {
       steps {
@@ -23,21 +28,33 @@ pipeline {
 
     stage('QA Testing - Web UI') {
       parallel {
-        stage('QA Testing - Web UI') {
+        stage('Web UI') {
+          agent {
+            node {
+              label ''
+              customWorkspace 'workspace/WebAppUiAutomation'
+            }
+
+          }
           steps {
             git 'https://github.com/TestLeafInc/WebAppUiAutomation.git'
             sleep(time: 10, unit: 'SECONDS')
             bat 'mvn test'
-            ws(dir: 'workspace/WebAppUIAutomation')
           }
         }
 
         stage('API Testing') {
+          agent {
+            node {
+              label ''
+              customWorkspace 'workspace/WebAppAPIAutomation'
+            }
+
+          }
           steps {
             git 'https://github.com/TestLeafInc/WebAppApiAutomation.git'
             sleep(time: 10, unit: 'SECONDS')
             bat 'mvn test'
-            ws(dir: 'workspace/WebAppUIAutomation')
           }
         }
 
